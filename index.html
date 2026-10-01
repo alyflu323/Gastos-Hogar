@@ -60,20 +60,26 @@ input:focus,select:focus{border-color:#b8b8b0}
 .chip.aly{background:#eef0f2;color:#596672}.chip.pol{background:var(--sage-soft);color:#587060}.chip.half{background:#f0efeb;color:#77746d}
 .delete{border:0;background:none;color:#b2b2ac;font-size:15px;padding:2px 4px}.delete:hover{color:var(--danger)}.month-table .total-col .delete{position:absolute;right:7px;top:50%;transform:translateY(-50%)}
 .empty{text-align:center;padding:32px 15px;color:var(--muted);font-size:11px}
-.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+.summary{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.total-stat{flex:0 0 100%;padding:14px 15px;background:linear-gradient(135deg,#ffffff 0%,#f8faf7 100%)}
+.person-stat{flex:1 1 0}
+.stat-top{display:flex;align-items:center;justify-content:space-between}
+.mini-heart{font-family:Georgia,serif;color:#9b8179;font-size:16px}
 .stat-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.55px}
-.stat-value{font-size:17px;font-weight:750;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat-value{font-size:18px;font-weight:750;margin-top:5px;font-variant-numeric:tabular-nums;letter-spacing:-.2px}
+.total-stat .stat-value{font-size:22px}
 .stat-sub{font-size:9px;color:var(--muted);margin-top:3px}
-.month-table th{text-align:right}.month-table th:first-child{text-align:left}
+.total-stat:after{content:"";display:block;width:42px;height:3px;border-radius:3px;background:#dfe7e1;margin-top:9px}
+.month-table th{text-align:right}.month-table th:first-child{text-align:left}.header-check{font-size:9px;color:#8a958c;font-weight:800}
 .month-table td{text-align:right}.month-table td:first-child{text-align:left}
 .money{font-variant-numeric:tabular-nums;font-weight:650;white-space:nowrap}
 .total-col{font-weight:750;position:relative;padding-right:34px!important}
 .pay-cell{min-width:74px}
-.pay-wrap{display:flex;align-items:center;justify-content:flex-end;gap:7px}
-.pay-btn{width:23px;height:23px;border-radius:6px;border:1px solid #ddd;background:#fff;color:transparent;display:inline-grid;place-items:center;font-size:12px;font-weight:800;transition:.15s;flex:none}
-.pay-btn:hover{border-color:#aaa}
-.pay-btn.paid{background:var(--sage);border-color:var(--sage);color:#fff}
+.pay-wrap{display:inline-flex;align-items:center;justify-content:flex-end;gap:6px}.pay-wrap .money-amount{white-space:nowrap}
+.pay-btn{width:22px;height:22px;border-radius:50%;border:1px solid #d9ddd8;background:#fff;color:transparent;display:inline-grid;place-items:center;font-size:11px;font-weight:850;transition:.18s;flex:none;box-shadow:0 1px 2px rgba(30,30,25,.04)}
+.pay-btn:hover{border-color:#aeb8b0;transform:scale(1.04)}
+.pay-btn.paid{background:var(--sage);border-color:var(--sage);color:#fff;box-shadow:0 2px 5px rgba(117,138,125,.18)}
 .person-head{display:flex;align-items:center;gap:7px}
 .initial{width:21px;height:21px;border-radius:6px;display:grid;place-items:center;font-size:9px;font-weight:800}
 .initial.a{background:#eef0f2;color:#596672}.initial.p{background:var(--sage-soft);color:#587060}
@@ -85,7 +91,7 @@ input:focus,select:focus{border-color:#b8b8b0}
  .app{padding:18px 11px 30px} header{align-items:center;gap:10px}
  .banner-doodles{font-size:10px} .month-head{gap:7px}.month-head .month-picker{flex:1}.month-head .btn{white-space:nowrap}
  .addbar{grid-template-columns:1fr 1fr}.addbar input:first-child{grid-column:span 2}.addbar .btn{grid-column:span 2}
- .table th,.table td{padding:7px 6px}.hide-mobile{display:none}.summary{grid-template-columns:1fr 1fr}.summary .stat:last-child{grid-column:span 2}
+ .table th,.table td{padding:7px 6px}.hide-mobile{display:none}.summary{display:flex;flex-wrap:wrap}.total-stat{flex:0 0 100%}.person-stat{flex:1 1 0;min-width:0}.person-stat.aly-card{background:linear-gradient(135deg,#fff 0%,#f5f5f8 100%)}.person-stat.pol-card{background:linear-gradient(135deg,#fff 0%,#f4f8f5 100%)}
  .month-table th,.month-table td{padding:8px 5px}
  .month-table th:nth-child(5),.month-table td:nth-child(5){width:20px}
  .pay-wrap{gap:5px}
@@ -167,12 +173,24 @@ input:focus,select:focus{border-color:#b8b8b0}
   </div>
 
   <div class="summary">
-    <div class="stat"><div class="stat-label">Total del mes · ✦</div><div class="stat-value" id="monthTotal">0,00 €</div><div class="stat-sub" id="monthPaid">0,00 € pagados</div></div>
-    <div class="stat"><div class="stat-label">Aly · ♡</div><div class="stat-value" id="alyTotal">0,00 €</div><div class="stat-sub" id="alyPaid">0,00 € pagados</div></div>
-    <div class="stat"><div class="stat-label">Pol · ⌂</div><div class="stat-value" id="polTotal">0,00 €</div><div class="stat-sub" id="polPaid">0,00 € pagados</div></div>
+    <div class="stat total-stat">
+      <div class="stat-top"><div class="stat-label">Total del mes · ✦</div><span class="mini-heart">♡</span></div>
+      <div class="stat-value" id="monthTotal">0,00 €</div>
+      <div class="stat-sub" id="monthPaid">0,00 € pagados</div>
+    </div>
+    <div class="stat person-stat aly-card">
+      <div class="stat-label">Aly · ♡</div>
+      <div class="stat-value" id="alyTotal">0,00 €</div>
+      <div class="stat-sub" id="alyPaid">0,00 € pagados</div>
+    </div>
+    <div class="stat person-stat pol-card">
+      <div class="stat-label">Pol · ⌂</div>
+      <div class="stat-value" id="polTotal">0,00 €</div>
+      <div class="stat-sub" id="polPaid">0,00 € pagados</div>
+    </div>
   </div>
 
-  <div class="topline">
+  <div class="topline month-intro">
     <div><div class="title" id="monthTitle">Octubre 2026 <span style="font-size:12px;color:#8a746d">♡</span></div><div class="desc">Marcáis ✓ cuando cada uno ha pasado su parte a la cuenta conjunta.</div></div>
   </div>
 
@@ -181,8 +199,8 @@ input:focus,select:focus{border-color:#b8b8b0}
       <thead>
         <tr>
           <th>Concepto</th>
-          <th>Aly</th>
-          <th>Pol</th>
+          <th>Aly <span class="header-check">✓</span></th>
+          <th>Pol <span class="header-check">✓</span></th>
           <th>Total</th>
           <th></th>
         </tr>
@@ -269,8 +287,8 @@ function renderMonth(){
    if((a&&!pay.aly)||(p&&!pay.pol))pending++;
    const tr=document.createElement('tr');
    tr.innerHTML=`<td><div class="name">${esc(x.name)}</div><div class="meta">${x.extra?'Puntual':'Recurrente'}</div></td>
-     <td class="money"><div class="pay-wrap">${money(a)}${a?`<button class="pay-btn ${pay.aly?'paid':''}" title="Marcar Aly como pagado" onclick="togglePay('${x.id}','aly')">${pay.aly?'✓':''}</button>`:''}</div></td>
-     <td class="money"><div class="pay-wrap">${money(p)}${p?`<button class="pay-btn ${pay.pol?'paid':''}" title="Marcar Pol como pagado" onclick="togglePay('${x.id}','pol')">${pay.pol?'✓':''}</button>`:''}</div></td>
+     <td class="money"><div class="pay-wrap">${a?`<span class="money-amount">${money(a)}</span><button class="pay-btn ${pay.aly?'paid':''}" title="Marcar Aly como pagado" onclick="togglePay('${x.id}','aly')">${pay.aly?'✓':''}</button>`:''}</div></td>
+     <td class="money"><div class="pay-wrap">${p?`<span class="money-amount">${money(p)}</span><button class="pay-btn ${pay.pol?'paid':''}" title="Marcar Pol como pagado" onclick="togglePay('${x.id}','pol')">${pay.pol?'✓':''}</button>`:''}</div></td>
      <td class="money total-col">${money(x.amount)} ${x.extra?`<button class="delete" onclick="deleteExtra('${x.id}')">×</button>`:''}</td>`;
    body.appendChild(tr)
  });
