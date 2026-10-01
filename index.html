@@ -133,7 +133,7 @@ input:focus,select:focus{border-color:#b8b8b0}
   <div class="card">
     <div class="addbar">
       <input id="name" placeholder="Concepto · alquiler, internet, luz…">
-      <input id="amount" type="number" min="0" step="0.01" placeholder="Importe">
+      <input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="Importe">
       <select id="person"><option value="Aly">Aly</option><option value="Pol">Pol</option><option value="50/50">50/50</option></select>
       <select id="category">
         <option value="">Categoría</option>
@@ -225,7 +225,7 @@ input:focus,select:focus{border-color:#b8b8b0}
     <div style="font-weight:750;font-size:14px;margin-bottom:12px">Gasto puntual · <span id="modalMonth"></span></div>
     <div style="display:grid;gap:7px">
       <input id="extraName" placeholder="Concepto">
-      <input id="extraAmount" type="number" min="0" step="0.01" placeholder="Importe">
+      <input id="extraAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="Importe">
       <select id="extraPerson"><option value="Aly">Aly</option><option value="Pol">Pol</option><option value="50/50">50/50</option></select>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:12px">
@@ -245,6 +245,7 @@ let supabaseClient=null, realtimeChannel=null, remoteReady=false, refreshing=fal
 
 function keyFor(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
 function money(n){return Number(n||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'}
+function parseMoneyInput(v){const s=String(v??'').trim().replace(/\s/g,'').replace(',','.');return Number.parseFloat(s)}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function ensureMonth(k){
@@ -305,7 +306,7 @@ function categoryIcon(c){
  if(s.includes('alquiler')||s==='casa') return '🏠'; if(s.includes('agua')) return '💧'; if(s.includes('luz')||s.includes('electric')) return '💡'; if(s.includes('gas')) return '🔥'; if(s.includes('internet')||s.includes('móvil')||s.includes('movil')||s.includes('wifi')) return '📱'; if(s.includes('suministr')) return '🏡'; if(s.includes('super')) return '🛒'; if(s.includes('comida')||s.includes('rest')) return '🍝'; if(s.includes('hogar')) return '🧺'; if(s.includes('coche')||s.includes('gasol')||s.includes('transport')) return '🚗'; if(s.includes('ocio')) return '🎬'; if(s.includes('suscrip')) return '🎧'; if(s.includes('salud')) return '🌿'; if(s.includes('mascot')) return '🐾'; if(s.includes('compras')) return '🛍️'; if(s.includes('viajes')) return '✈️'; return '✨';
 }
 function addExpense(){
- const n=document.getElementById('name').value.trim(),a=parseFloat(document.getElementById('amount').value),p=document.getElementById('person').value,c=document.getElementById('category').value;
+ const n=document.getElementById('name').value.trim(),a=parseMoneyInput(document.getElementById('amount').value),p=document.getElementById('person').value,c=document.getElementById('category').value;
  if(!n||!a)return alert('Indica concepto e importe.');
  const id=crypto.randomUUID();const item={id,name:n,amount:a,person:p,category:c,extra:false};db.expenses.push(item);Object.keys(db.months).forEach(k=>{db.months[k].payments[id]={aly:false,pol:false}});save();render();syncInsert(item);
  document.getElementById('name').value='';document.getElementById('amount').value='';document.getElementById('category').value='';
@@ -320,7 +321,7 @@ function togglePay(id,who){
 function openExtra(){document.getElementById('modalMonth').textContent=months[current.getMonth()];document.getElementById('modal').style.display='flex';document.getElementById('extraName').focus()}
 function closeExtra(){document.getElementById('modal').style.display='none'}
 function saveExtra(){
- const n=document.getElementById('extraName').value.trim(),a=parseFloat(document.getElementById('extraAmount').value),p=document.getElementById('extraPerson').value;
+ const n=document.getElementById('extraName').value.trim(),a=parseMoneyInput(document.getElementById('extraAmount').value),p=document.getElementById('extraPerson').value;
  if(!n||!a)return alert('Indica concepto e importe.');
  const id=crypto.randomUUID();ensureMonth(currentKey);const item={id,name:n,amount:a,person:p,extra:true,category:''};db.months[currentKey].extra.push(item);db.months[currentKey].payments[id]={aly:false,pol:false};save();renderMonth();syncInsert(item,currentKey);
  document.getElementById('extraName').value='';document.getElementById('extraAmount').value='';closeExtra()
